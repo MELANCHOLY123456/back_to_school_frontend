@@ -12,7 +12,19 @@
     <!-- 输入列1 -->
     <el-table-column >
       <template slot-scope="scope">
-        <el-input v-model="scope.row.value1" :placeholder="'请输入' + scope.row.key1"></el-input>
+        <el-select v-if="scope.row.key1 === '性别' || scope.row.key1 === '学院' || scope.row.key1 === '证件类型' || scope.row.key1 === '民族'" v-model="scope.row.value1" :placeholder="'请选择' + scope.row.key1" style="width: 100%;">
+          <el-option
+            v-for="item in getOptions(scope.row.key1)"
+            :key="item"
+            :label="item"
+            :value="item">
+          </el-option>
+        </el-select>
+        <!-- 政治面貌使用下拉单选框 -->
+        <el-select v-else-if="scope.row.key1 === '政治面貌'" v-model="scope.row.value1" filterable :placeholder="'请选择政治面貌'" style="width: 100%;">
+          <el-option v-for="item in getOptions(scope.row.key1)" :key="item" :label="item" :value="item"></el-option>
+        </el-select>
+        <el-input v-else v-model="scope.row.value1" :placeholder="'请输入' + scope.row.key1"></el-input>
       </template>
     </el-table-column>
     <!-- 关键字列2 -->
@@ -20,7 +32,19 @@
     <!-- 输入列2 -->
     <el-table-column>
       <template slot-scope="scope">
-        <el-input v-model="scope.row.value2" :placeholder="'请输入' + scope.row.key1"></el-input>
+        <el-select v-if="scope.row.key2 === '性别' || scope.row.key2 === '学院' || scope.row.key2 === '证件类型' || scope.row.key2 === '民族'" v-model="scope.row.value2" :placeholder="'请选择' + scope.row.key2" style="width: 100%;">
+          <el-option
+            v-for="item in getOptions(scope.row.key2)"
+            :key="item"
+            :label="item"
+            :value="item">
+          </el-option>
+        </el-select>
+        <!-- 如果第二列是政治面貌，也用下拉单选框 -->
+        <el-select v-else-if="scope.row.key2 === '政治面貌'" v-model="scope.row.value2" filterable :placeholder="'请选择政治面貌'" style="width: 100%;">
+          <el-option v-for="item in getOptions(scope.row.key2)" :key="item" :label="item" :value="item"></el-option>
+        </el-select>
+        <el-input v-else v-model="scope.row.value2" :placeholder="'请输入' + scope.row.key2"></el-input>
       </template>
     </el-table-column>
   </el-table>
@@ -94,7 +118,7 @@
   />
 </div>
   <div style="height: 60px;margin-top: 30px;">
-  <el-button type="primary">提交</el-button>
+  <el-button type="primary" @click="onSubmit">提交</el-button>
 </div>
   </form>
   </el-main>
@@ -102,6 +126,8 @@
 </template>
 
 <script>
+import { submitForm } from '@/api/getInf'
+import { getSelectorInfo } from '@/utils/storage'
 export default {
   name: 'InformationFrameIndex',
   data () {
@@ -115,11 +141,27 @@ export default {
         { key1: '证件类型', value1: '', key2: '证件号码', value2: '' },
         { key1: '民族', value1: '', key2: '专业', value2: '' },
         { key1: 'QQ号码', value1: '', key2: '手机号码', value2: '' },
-        { key1: '目标省（市）', value1: '', key2: '目标市（区）', value2: '' },
-        { key1: '目标县（县）', value1: '', key2: '目标高中', value2: '' }
+        { key1: '政治面貌', value1: '', key2: '目标省（市）', value2: '' },
+        { key1: '目标市（区）', value1: '', key2: '目标县（县）', value2: '' },
+        { key1: '目标高中', value1: '', key2: '团队总结', value2: '' }
       ],
-      teamMembers: []
+      teamMembers: [],
+      // 选项数据
+      optionsData: {
+        性别: ['男', '女'],
+        学院: ['计算机学院', '电子学院'], // 默认选项
+        证件类型: ['身份证', '护照', '其他证件'],
+        民族: ['汉族', '回族'],
+        政治面貌: ['党员', '预备党员', '共青团员', '群众'],
+        '目标省（市）': [],
+        '目标市（区）': [],
+        '目标县（县）': []
+      },
+      selectorItem: {} // 从后端获取的选项数据
     }
+  },
+  created () {
+    this.getSelfInf()
   },
   methods: {
     headerCellStyle () {
@@ -132,6 +174,108 @@ export default {
       return {
         'font-family': '黑体',
         'font-size': '14px'
+      }
+    },
+    // 获取个人信息和选项数据
+    getSelfInf () {
+      // 从本地存储获取选项信息
+      this.selectorItem = getSelectorInfo()
+      // 调试信息
+      console.log('selectorItem:', this.selectorItem)
+      // 更新选项数据
+      // 如果 selectorItem 中有学院选项，则更新 optionsData 中的学院选项
+      if (this.selectorItem.collegeOptions) {
+        this.optionsData.学院 = this.selectorItem.collegeOptions
+        console.log('学院选项:', this.selectorItem.collegeOptions)
+      }
+      // 如果 selectorItem 中有民族选项，则更新 optionsData 中的民族选项
+      if (this.selectorItem.nationalityOptions) {
+        this.optionsData.民族 = this.selectorItem.nationalityOptions
+        console.log('民族选项:', this.selectorItem.nationalityOptions)
+      }
+      // 如果 selectorItem 中有证件类型选项，则更新 optionsData 中的证件类型选项
+      if (this.selectorItem.IDCardTypeOptions) {
+        this.optionsData.证件类型 = this.selectorItem.IDCardTypeOptions
+        console.log('证件类型选项:', this.selectorItem.IDCardTypeOptions)
+      }
+      // 如果 selectorItem 中有性别选项，则更新 optionsData 中的性别选项
+      if (this.selectorItem.genderOptions) {
+        this.optionsData.性别 = this.selectorItem.genderOptions
+        console.log('性别选项:', this.selectorItem.genderOptions)
+      }
+      // 如果 selectorItem 中有政治面貌选项，则更新 optionsData 中的政治面貌选项
+      if (this.selectorItem.politicalStatusOptions) {
+        this.optionsData.政治面貌 = this.selectorItem.politicalStatusOptions
+        console.log('政治面貌选项:', this.selectorItem.politicalStatusOptions)
+      }
+    },
+    // 获取选项数据
+
+    getOptions (key) {
+      let result = []
+      // 根据不同的键名映射到对应的选项数据
+      switch (key) {
+        case '性别':
+          result = (this.selectorItem.genderOptions && this.selectorItem.genderOptions.length > 0)
+            ? this.selectorItem.genderOptions
+            : this.optionsData.性别
+          break
+        case '学院':
+          result = (this.selectorItem.collegeOptions && this.selectorItem.collegeOptions.length > 0)
+            ? this.selectorItem.collegeOptions
+            : this.optionsData.学院
+          break
+        case '证件类型':
+          result = (this.selectorItem.IDCardTypeOptions && this.selectorItem.IDCardTypeOptions.length > 0)
+            ? this.selectorItem.IDCardTypeOptions
+            : this.optionsData.证件类型
+          break
+        case '民族':
+          result = (this.selectorItem.nationalityOptions && this.selectorItem.nationalityOptions.length > 0)
+            ? this.selectorItem.nationalityOptions
+            : this.optionsData.民族
+          break
+        case '政治面貌':
+          result = (this.selectorItem.politicalStatusOptions && this.selectorItem.politicalStatusOptions.length > 0)
+            ? this.selectorItem.politicalStatusOptions
+            : this.optionsData.政治面貌
+          break
+        default:
+          // 对于其他键，尝试从 selectorItem 获取或使用本地的 optionsData
+          if (this.selectorItem && this.selectorItem[key + 'Options'] && this.selectorItem[key + 'Options'].length > 0) {
+            result = this.selectorItem[key + 'Options']
+          } else {
+            result = this.optionsData[key] || []
+          }
+      }
+      // 确保返回的是数组
+      result = Array.isArray(result) ? result : []
+      // 调试信息
+      console.log(`获取选项数据 for ${key}:`, result)
+      return result
+    },
+    // 获取选择器选项数据
+    getSelectorItem () {
+      this.selectorItem = getSelectorInfo()
+      // 如果 selectorItem 中有学院选项，则更新 optionsData 中的学院选项
+      if (this.selectorItem.collegeOptions) {
+        this.optionsData.学院 = this.selectorItem.collegeOptions
+      }
+      // 如果 selectorItem 中有民族选项，则更新 optionsData 中的民族选项
+      if (this.selectorItem.nationalityOptions) {
+        this.optionsData.民族 = this.selectorItem.nationalityOptions
+      }
+      // 如果 selectorItem 中有证件类型选项，则更新 optionsData 中的证件类型选项
+      if (this.selectorItem.IDCardTypeOptions) {
+        this.optionsData.证件类型 = this.selectorItem.IDCardTypeOptions
+      }
+      // 如果 selectorItem 中有性别选项，则更新 optionsData 中的性别选项
+      if (this.selectorItem.genderOptions) {
+        this.optionsData.性别 = this.selectorItem.genderOptions
+      }
+      // 如果 selectorItem 中有政治面貌选项，则更新 optionsData 中的政治面貌选项
+      if (this.selectorItem.politicalStatusOptions) {
+        this.optionsData.政治面貌 = this.selectorItem.politicalStatusOptions
       }
     },
     addTeamMember () {
@@ -158,10 +302,82 @@ export default {
           this.imageUrls.push(URL.createObjectURL(files[i]))
         }
       }
+    },
+    // 提交表单
+    async onSubmit () {
+      // 将表格数据转换为表单对象
+      const form = {}
+      // 遍历表格数据，将键值对添加到表单对象中
+      this.tableData.forEach(row => {
+        form[row.key1] = row.value1
+        form[row.key2] = row.value2
+      })
+      // 添加团队相关信息
+      form.isTeam = this.value1 ? 0 : 1 // 0表示个人报名，1表示团队报名
+      form.isWillingToMerge = this.value2 ? 0 : 1 // 0表示拒绝合并，1表示接受合并
+      form.teamMembers = this.teamMembers
+      form.memberCount = this.teamMembers.length
+      // 添加图片信息（如果有）
+      if (this.imageUrls.length > 0) {
+        form.avatar = this.imageUrls[0] // 这里简化处理，只取第一张图片
+      }
+      // 添加默认值
+      form.activityStatus = 0 // 0 表示预报名状态
+      form.editDate = new Date().toISOString()
+      // 政治面貌使用单选，直接赋值
+      form.politicalOptions = form['政治面貌'] || ''
+      form.province = form['目标省（市）'] || ''
+      form.city = form['目标市（区）'] || ''
+      form.county = form['目标县（县）'] || ''
+      form.senior = form['目标高中'] || ''
+      form.teamSummary = form['团队总结'] || ''
+      // 验证必填字段
+      if (!this.canSubmit(form)) {
+        this.$message.error('请填写所有必填信息')
+        return
+      }
+      try {
+        const res = await submitForm(form)
+        if (res) {
+          this.$message.success('提交成功')
+          // 可以在这里添加跳转到其他页面的逻辑
+          // this.$router.push('/pc/')
+        }
+      } catch (error) {
+        this.$message.error('提交失败，请重试')
+        console.error('提交失败:', error)
+      }
+    },
+    // 验证表单是否可以提交
+    canSubmit (form) {
+      // 检查字段是否为非空字符串
+      const isNotEmpty = value => typeof value === 'string' && value.trim() !== ''
+      // 检查必填字段
+      const requiredFields = [
+        '姓名', '性别', '学号', '学院', '证件类型', '证件号码',
+        '民族', '专业', 'QQ号码', '手机号码', '政治面貌',
+        '目标省（市）', '目标市（区）', '目标县（县）', '目标高中'
+      ]
+      // 验证所有必填字段
+      const hasAllRequired = requiredFields.every(field => isNotEmpty(form[field]))
+      // 检查头像是否已上传
+      const hasAvatar = this.imageUrls && this.imageUrls.length > 0
+      // 检查团队相关字段
+      const hasTeamFields =
+        typeof form.isTeam === 'number' &&
+        typeof form.isWillingToMerge === 'number' &&
+        typeof form.memberCount === 'number'
+      // 输出调试信息
+      console.log('Form validation:', {
+        hasAllRequired,
+        hasAvatar,
+        hasTeamFields,
+        formFields: form
+      })
+      return hasAllRequired && hasAvatar && hasTeamFields
     }
   }
 }
-
 </script>
 
 <style scoped>

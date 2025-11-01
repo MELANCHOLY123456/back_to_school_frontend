@@ -72,7 +72,7 @@
         <!-- 更多队员学号列根据实际数据列数添加 -->
         <el-table-column label="操作" width="120">
           <template slot-scope="scope">
-            <el-button @click="handleViewDetails(scope.row)" size="small">查看详情</el-button>
+            <el-button @click="handleViewDetails(scope.row)" size="small">查看报名表</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -86,8 +86,138 @@
         layout="total, prev, pager, next, jumper"
         style="margin-top: 20px; text-align: center;"
       ></el-pagination>
+      <!-- 查看报名表弹窗 -->
+      <el-dialog title="报名表详情" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+        <el-form :model="currentDetail" label-width="120px" v-if="currentDetail">
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="姓名:">
+                <span>{{ currentDetail.姓名 }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="队长学号:">
+                <span>{{ currentDetail.队长学号 }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="学院:">
+                <span>{{ currentDetail.学院 }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="专业:">
+                <span>{{ currentDetail.专业 }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="民族:">
+                <span>{{ currentDetail.民族 }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="政治面貌:">
+                <span>{{ currentDetail.政治面貌 }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="身份证号:">
+                <span>{{ currentDetail.身份证号 }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="QQ号码:">
+                <span>{{ currentDetail.QQ号码 }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="手机号码:">
+                <span>{{ currentDetail.手机号码 }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="目标省:">
+                <span>{{ currentDetail['目标省（市）'] }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="目标市:">
+                <span>{{ currentDetail['目标市（区）'] }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="目标县:">
+                <span>{{ currentDetail['目标县（市、区）'] }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="目标学校:">
+                <span>{{ currentDetail.目标学校 }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="是否团队报名:">
+                <span>{{ currentDetail.是否团队报名 }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="队员人数:">
+                <span>{{ currentDetail.队员人数 }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="是否愿意合并:">
+                <span>{{ currentDetail.是否愿意合并 }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="活动完成状态:">
+                <span>{{ currentDetail.活动完成状态 }}</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="信息修改时间:">
+                <span>{{ currentDetail.信息修改时间 }}</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item label="总结:">
+            <span>{{ currentDetail.总结 }}</span>
+          </el-form-item>
+          <el-form-item label="头像:">
+            <el-image
+              v-if="currentDetail.照片"
+              style="width: 100px; height: 100px"
+              :src="currentDetail.照片"
+              fit="cover"
+            ></el-image>
+            <div v-else style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; background-color: #f5f5f5;">
+              无图片
+            </div>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">关 闭</el-button>
+        </span>
+      </el-dialog>
     </div>
-  </template>
+</template>
 
 <script>
 import { getProps, getSignupData, getSignupDataTable } from '@/api/getInf'
@@ -107,7 +237,10 @@ export default {
       total: 0, // 数据总数
       props: [],
       currentPage: 1, // 当前页
-      pageSize: 99999 // 每页显示的数据量
+      pageSize: 99999, // 每页显示的数据量
+      // 弹窗相关数据
+      dialogVisible: false,
+      currentDetail: null
     }
   },
   mounted () {
@@ -183,7 +316,6 @@ export default {
         return 4
       }
     },
-
     // 处理查询下拉框变化
     handleSearch () {
       console.log('搜索条件', this.search)
@@ -201,7 +333,6 @@ export default {
       this.signupData = this.backupSignupData
       this.total = this.backupSignupData.length
     },
-
     // 处理下载按钮点击事件
     async handleDownload () {
       console.log('下载数据')
@@ -218,8 +349,16 @@ export default {
 
     // 查看详情
     handleViewDetails (row) {
-      console.log('查看详情:', row)
-      // 你可以跳转到详情页面，或者弹出一个弹框展示更多信息
+      this.currentDetail = row
+      this.dialogVisible = true
+    },
+    // 关闭弹窗
+    handleClose (done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done()
+        })
+        .catch(_ => {})
     }
   }
 }

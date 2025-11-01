@@ -84,7 +84,7 @@
     </el-row>
 
     <!-- 遍历二级字典创建表格 -->
-    <div v-for="(options, title) in selectorItem" :key="options" class="table-container setting-section">
+    <div v-for="(options, title) in selectorItem" :key="title" class="table-container setting-section">
       <div class="table-header">
         <h3>{{ title }}</h3>
         <el-input v-model="inputValues[title]" placeholder="请输入值" size="small"
@@ -100,7 +100,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(value, index) in options" :key="value">
+          <tr v-for="(value, index) in options" :key="index">
             <td>{{ index + 1 }}</td>
             <td>{{ value }}</td>
             <td>
@@ -135,7 +135,7 @@ export default {
       inputValues: {} // 用于存储每个选项对应的输入值
     }
   },
-  computed () { },
+  computed: { },
   mounted () {
     this.getProps()
   },
@@ -274,6 +274,8 @@ export default {
     async handleResetAll () {
       const res = await resetSignupForm()
       this.$message.success(`${res.data.message}`)
+      // 可选：显示提示信息，建议用户刷新 signupinf 页面查看最新数据
+      this.$message.info('请刷新"报名信息"页面查看最新数据')
     }
   }
 }

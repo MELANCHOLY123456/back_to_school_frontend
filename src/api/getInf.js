@@ -4,7 +4,7 @@ import { getMD5 } from '@/utils/md5'
 
 export const getSelfInf = async () => {
   const res = await request({
-    url: '/signup/',
+    url: 'signup/',
     method: 'post',
     data: {
       user: store.getters.user,
@@ -18,7 +18,7 @@ export const getSelfInf = async () => {
 export const acLogin = async (user, password) => {
   password = getMD5(password)
   return await request({
-    url: '/auth/login/',
+    url: 'auth/login/',
     method: 'post',
     data: {
       user: user,
@@ -29,7 +29,7 @@ export const acLogin = async (user, password) => {
 
 export const register = async (register) => {
   register.password = getMD5(register.password)
-  return await request.post('/register/',
+  return await request.post('register/',
 
     // 如果要直接传递对象属性而不嵌套在一个字段下，
     // 可以直接将该对象作为 data 参数传递
@@ -39,7 +39,7 @@ export const register = async (register) => {
 
 export const submitForm = async (form) => {
   return await request({
-    url: '/submitSignupInf/',
+    url: 'signup/submitSignupInf/',
     method: 'post',
     data: {
       form: form,
@@ -54,7 +54,7 @@ export const submitForm = async (form) => {
 // 获取图片验证码
 export const getPicCode = async () => {
   return await request({
-    url: '/captcha/picCode/',
+    url: 'captcha/picCode/',
     method: 'get'
   })
 }
@@ -62,7 +62,7 @@ export const getPicCode = async () => {
 // 获取邮箱验证码
 export const getSmsCode = async (piccode, picToken, email) => {
   return await request({
-    url: '/captcha/smsCode/',
+    url: 'captcha/smsCode/',
     method: 'get',
     params: {
       picCode: piccode,
@@ -74,7 +74,7 @@ export const getSmsCode = async (piccode, picToken, email) => {
 
 export const getSignupPdf = async (form) => {
   const response = await request({
-    url: '/signup/getSignupPdf/',
+    url: 'signup/getSignupPdf/',
     method: 'post',
     responseType: 'blob', // 处理为二进制流
     data: {
@@ -110,7 +110,7 @@ export const getSignupPdf = async (form) => {
 // 获取绑定的邮箱
 export const getBindEmail = async () => {
   return await request({
-    url: '/auth/getBindEmail/',
+    url: 'auth/getBindEmail/',
     method: 'post',
     data: {
       user: store.getters.user,
@@ -121,21 +121,21 @@ export const getBindEmail = async () => {
 
 export const getCardSummary = async () => {
   return await request({
-    url: '/admin/cardsummary/',
+    url: 'admin/cardsummary/',
     method: 'get'
   })
 }
 
 export const getChartData = async () => {
   return await request({
-    url: '/admin/get/chartdata/',
+    url: 'admin/get/chartdata/',
     method: 'get'
   })
 }
 
 export const getStatisticalDataTable = async () => {
   const res = await request({
-    url: '/admin/get/statisticalDataTable/',
+    url: 'admin/get/statisticalDataTable/',
     method: 'post',
     responseType: 'blob',
     data: {
@@ -165,7 +165,7 @@ export const getStatisticalDataTable = async () => {
 
 export const getIsSignuped = async () => {
   return await request({
-    url: '/signup/get/issignuped/',
+    url: 'signup/get/issignuped/',
     method: 'post',
     data: {
       user: store.getters.user,
@@ -176,7 +176,7 @@ export const getIsSignuped = async () => {
 
 export const getIsRealName = async () => {
   return await request({
-    url: '/signup/get/isrealname/',
+    url: 'signup/get/isrealname/',
     method: 'post',
     data: {
       user: store.getters.user,
@@ -187,7 +187,7 @@ export const getIsRealName = async () => {
 
 export const realName = async (realnameRes) => {
   return await request({
-    url: '/realname/',
+    url: 'realname/',
     method: 'post',
     data: {
       tokenRes: {
@@ -202,14 +202,14 @@ export const realName = async (realnameRes) => {
 // 系统基本设置属性
 export const getProps = async () => {
   return await request({
-    url: '/system/get/props/',
+    url: 'system/get/props/',
     method: 'get'
   })
 }
 
 export const setProps = async (props) => {
   return await request({
-    url: '/set/props/',
+    url: 'set/props/',
     method: 'post',
     data: {
       tokenRes: {
@@ -224,7 +224,7 @@ export const setProps = async (props) => {
 // 重置报名
 export const reset = async () => {
   return await request({
-    url: '/reset/',
+    url: 'reset/',
     method: 'post',
     data: {
       user: store.getters.user,
@@ -236,7 +236,7 @@ export const reset = async () => {
 // 设置选项
 export const updateSelectorItem = async (key, oldV, newV, op) => {
   return await request({
-    url: '/update/selectorItem/',
+    url: 'update/selectorItem/',
     method: 'post',
     data: {
       tokenRes: {
@@ -256,7 +256,7 @@ export const updateSelectorItem = async (key, oldV, newV, op) => {
 // 获取管理员表
 export const getAdminAccount = async () => {
   return await request({
-    url: '/admin/get/adminAccount/',
+    url: 'admin/get/adminAccount/',
     method: 'post',
     data: {
       user: store.getters.user,
@@ -267,7 +267,7 @@ export const getAdminAccount = async () => {
 // 更改管理员权限
 export const updateAdminAccount = async (user, authority1, authority2) => {
   return await request({
-    url: '/update/adminAccount/',
+    url: 'update/adminAccount/',
     method: 'post',
     data: {
       tokenRes: {
@@ -285,7 +285,7 @@ export const updateAdminAccount = async (user, authority1, authority2) => {
 // 获取账号表
 export const getAccount = async () => {
   return await request({
-    url: '/admin/get/accountInfo/',
+    url: 'admin/get/accountInfo/',
     method: 'post',
     data: {
       user: store.getters.user,
@@ -297,7 +297,7 @@ export const getAccount = async () => {
 // 队长撤销报名
 export const withdrawSignup = async () => {
   return await request({
-    url: '/delete/teamTable/',
+    url: 'delete/teamTable/',
     method: 'post',
     data: {
       user: store.getters.user,
@@ -309,7 +309,7 @@ export const withdrawSignup = async () => {
 // 账号页面的相关操作
 export const updateAccountInfo = async (user, resetTeam, resetPwd, resetEmail) => {
   return await request({
-    url: '/update/accountInfo/',
+    url: 'update/accountInfo/',
     method: 'post',
     data: {
       tokenRes: {
@@ -329,7 +329,7 @@ export const updateAccountInfo = async (user, resetTeam, resetPwd, resetEmail) =
 // 获取报名信息表
 export const getSignupData = async (year) => {
   return await request({
-    url: `/signup/get/signupInfo/${year}`,
+    url: `signup/get/signupInfo/${year}`,
     method: 'post',
     timeout: 0, // 设置为0表示不设置超时限制，直到请求完成
     data: {
@@ -342,7 +342,7 @@ export const getSignupData = async (year) => {
 // 下载报名信息表
 export const getSignupDataTable = async (year, college, isHavingMemberID, isMemberIDTiled, isSplitByProvince) => {
   const res = await request({
-    url: '/signup/get/signupInfoTable/',
+    url: 'signup/get/signupInfoTable/',
     method: 'post',
     responseType: 'blob',
     timeout: 0, // 设置为0表示不设置超时限制，直到请求完成
@@ -384,7 +384,7 @@ export const getSignupDataTable = async (year, college, isHavingMemberID, isMemb
 // 获取权限等级
 export const getAu = async () => {
   return await request({
-    url: '/auth/get/authority/',
+    url: 'auth/get/authority/',
     method: 'post',
     data: {
       user: store.getters.user,
@@ -396,7 +396,7 @@ export const getAu = async () => {
 // 获取已报名队伍信息
 export const getTeamInfo = async () => {
   return await request({
-    url: '/signup/get/teamInfo/',
+    url: 'signup/get/teamInfo/',
     method: 'post',
     data: {
       user: store.getters.user,
@@ -407,7 +407,7 @@ export const getTeamInfo = async () => {
 
 export const getStanding = async () => {
   return await request({
-    url: '/signup/get/standing/',
+    url: 'signup/get/standing/',
     method: 'post',
     data: {
       user: store.getters.user,
@@ -421,7 +421,7 @@ export const modifyPwd = async (lastPwd, newPwd) => {
   lastPwd = getMD5(lastPwd)
   newPwd = getMD5(newPwd)
   return await request({
-    url: '/auth/modify/pwd/',
+    url: 'auth/modify/pwd/',
     method: 'post',
     data: {
       tokenRes: {
@@ -438,7 +438,7 @@ export const modifyPwd = async (lastPwd, newPwd) => {
 
 export const getIsBindEmail = async () => {
   return await request({
-    url: '/auth/get/isBindEmail/',
+    url: 'auth/get/isBindEmail/',
     method: 'post',
     data: {
       user: store.getters.user,
@@ -450,7 +450,7 @@ export const getIsBindEmail = async () => {
 // 修改邮箱
 export const modifyEmail = async (picCode, picToken, smsCode, smsToken, email) => {
   return await request({
-    url: '/auth/modify/email/',
+    url: 'auth/modify/email/',
     method: 'post',
     data: {
       tokenRes: {
@@ -472,7 +472,7 @@ export const modifyEmail = async (picCode, picToken, smsCode, smsToken, email) =
 export const verifyForgetPassword = async (user, piccode, pictoken, smscode, smstoken, email, password) => {
   password = getMD5(password)
   return await request({
-    url: '/forget/pwd/',
+    url: 'forget/pwd/',
     method: 'post',
     data: {
       user: user,
@@ -488,7 +488,7 @@ export const verifyForgetPassword = async (user, piccode, pictoken, smscode, sms
 
 export const resetSignupForm = async () => {
   return await request({
-    url: '/reset/signupForm/',
+    url: 'system/reset/signupForm/',
     method: 'post',
     data: {
       user: store.getters.user,
@@ -499,7 +499,7 @@ export const resetSignupForm = async () => {
 
 export const changeSSToCheck = async (data) => {
   return await request({
-    url: '/change/signupStatus/toCheck',
+    url: 'change/signupStatus/toCheck',
     method: 'post',
     data: {
       tokenRes: {

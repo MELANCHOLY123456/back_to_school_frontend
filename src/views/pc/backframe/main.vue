@@ -181,40 +181,57 @@ export default {
     async getData () {
       let res = await getCardSummary()
       if (res && res.data) {
-        this.cardSummary = res.data.cardsummary
+        this.cardSummary = res.data.cardsummary || {}
       } else {
         console.warn('未获取到有效数据')
-        this.cardSummary = {} // 或者设置默认值
+        this.cardSummary = {}
       }
 
       res = await getChartData()
       if (res && res.data) {
-        this.chartData = res.data.chartdata
+        this.chartData = res.data.chartdata || {}
       } else {
         console.warn('未获取到有效数据')
-        this.chartData = {} // 或者设置默认值
+        this.chartData = {}
       }
     },
     async getStatisticalDataTable () {
       await getStatisticalDataTable()
     },
     handleResize () {
-      if (this.peopleChartSpiltByCollegeInit || this.teamChartSpiltByCollegeInit || this.peopleChartSpiltByCollegeSignupedInit ||
-      this.teamChartSpiltByCollegeSignupedInit || this.peopleChartSpiltByProvinceInit || this.teamChartSpiltByProvinceInit ||
-      this.peopleChartSpiltByProvinceSignupedInit || this.teamChartSpiltByProvinceSignupedInit
-      ) {
-        // 触发图表重绘
+      // 检查图表实例是否存在后再调用resize方法
+      if (this.peopleChartSpiltByCollegeInit) {
         this.peopleChartSpiltByCollegeInit.resize()
+      }
+      if (this.teamChartSpiltByCollegeInit) {
         this.teamChartSpiltByCollegeInit.resize()
+      }
+      if (this.peopleChartSpiltByCollegeSignupedInit) {
         this.peopleChartSpiltByCollegeSignupedInit.resize()
+      }
+      if (this.teamChartSpiltByCollegeSignupedInit) {
         this.teamChartSpiltByCollegeSignupedInit.resize()
+      }
+      if (this.peopleChartSpiltByProvinceInit) {
         this.peopleChartSpiltByProvinceInit.resize()
+      }
+      if (this.teamChartSpiltByProvinceInit) {
         this.teamChartSpiltByProvinceInit.resize()
+      }
+      if (this.peopleChartSpiltByProvinceSignupedInit) {
         this.peopleChartSpiltByProvinceSignupedInit.resize()
+      }
+      if (this.teamChartSpiltByProvinceSignupedInit) {
         this.teamChartSpiltByProvinceSignupedInit.resize()
       }
     },
     init () {
+      // 检查chartData是否存在
+      if (!this.chartData) {
+        console.warn('chartData is null or undefined')
+        return
+      }
+
       // 图表1 各学院报名人数
       const peopleChartSpiltByCollege = document.getElementById(
         'peopleChartSpiltByCollege'
@@ -224,12 +241,12 @@ export default {
         peopleChartSpiltByCollege
       )
       // 缩放直方图的额外参数 prettier-ignore
-      const dataAxisPeopleChartSpiltByCollege = this.chartData.spbci.map(item => item.slice(0, 2))
+      const dataAxisPeopleChartSpiltByCollege = this.chartData.spbci ? this.chartData.spbci.map(item => item.slice(0, 2)) : []
       // prettier-ignore
-      const dataPeopleChartSpiltByCollege = this.chartData.spbcv
+      const dataPeopleChartSpiltByCollege = this.chartData.spbcv || []
       const yMaxPeopleChartSpiltByCollege = 500
       const dataShadowPeopleChartSpiltByCollege = []
-      for (let i = 0; i < dataPeopleChartSpiltByCollege.length; i++) {
+      for (let i = 0; i < (dataPeopleChartSpiltByCollege.length || 0); i++) {
         dataShadowPeopleChartSpiltByCollege.push(yMaxPeopleChartSpiltByCollege)
       }
 
@@ -302,12 +319,14 @@ export default {
       const zoomSize = 6
       this.peopleChartSpiltByCollegeInit.on('click', function (params) {
         console.log(dataAxisPeopleChartSpiltByCollege[Math.max(params.dataIndex - zoomSize / 2, 0)])
-        this.peopleChartSpiltByCollegeInit.dispatchAction({
-          type: 'dataZoom',
-          startValue: dataAxisPeopleChartSpiltByCollege[Math.max(params.dataIndex - zoomSize / 2, 0)],
-          endValue:
-            dataAxisPeopleChartSpiltByCollege[Math.min(params.dataIndex + zoomSize / 2, dataPeopleChartSpiltByCollege.length - 1)]
-        })
+        if (this.peopleChartSpiltByCollegeInit) {
+          this.peopleChartSpiltByCollegeInit.dispatchAction({
+            type: 'dataZoom',
+            startValue: dataAxisPeopleChartSpiltByCollege[Math.max(params.dataIndex - zoomSize / 2, 0)],
+            endValue:
+              dataAxisPeopleChartSpiltByCollege[Math.min(params.dataIndex + zoomSize / 2, dataPeopleChartSpiltByCollege.length - 1)]
+          })
+        }
       })
 
       // 图表2 各学院队伍数
@@ -334,7 +353,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: this.chartData.stbci.map(item => item.slice(0, 2)),
+            data: this.chartData.stbci ? this.chartData.stbci.map(item => item.slice(0, 2)) : [],
             axisTick: {
               alignWithLabel: true
             }
@@ -350,7 +369,7 @@ export default {
             name: '队伍数',
             type: 'bar',
             barWidth: '60%',
-            data: this.chartData.stbcv
+            data: this.chartData.stbcv || []
           }
         ]
       }
@@ -400,10 +419,12 @@ export default {
               labelLine: {
                 show: false
               },
-              data: this.chartData.cspci.map((item, i) => ({
-                value: this.chartData.cspcv[i],
-                name: item
-              }))
+              data: this.chartData.cspci && this.chartData.cspcv
+                ? this.chartData.cspci.map((item, i) => ({
+                  value: this.chartData.cspcv[i],
+                  name: item
+                }))
+                : []
             }
           ]
         }
@@ -455,10 +476,12 @@ export default {
               labelLine: {
                 show: false
               },
-              data: this.chartData.cstci.map((item, i) => ({
-                value: this.chartData.cstcv[i],
-                name: item
-              }))
+              data: this.chartData.cstci && this.chartData.cstcv
+                ? this.chartData.cstci.map((item, i) => ({
+                  value: this.chartData.cstcv[i],
+                  name: item
+                }))
+                : []
             }
           ]
         }
@@ -490,7 +513,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: this.chartData.spbpi.map(item => item.slice(0, 2)),
+            data: this.chartData.spbpi ? this.chartData.spbpi.map(item => item.slice(0, 2)) : [],
             axisTick: {
               alignWithLabel: true
             }
@@ -506,7 +529,7 @@ export default {
             name: '人数',
             type: 'bar',
             barWidth: '60%',
-            data: this.chartData.spbpv
+            data: this.chartData.spbpv || []
           }
         ]
       }
@@ -537,7 +560,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: this.chartData.stbpi.map(item => item.slice(0, 2)),
+            data: this.chartData.stbpi ? this.chartData.stbpi.map(item => item.slice(0, 2)) : [],
             axisTick: {
               alignWithLabel: true
             }
@@ -553,7 +576,7 @@ export default {
             name: '队伍数',
             type: 'bar',
             barWidth: '60%',
-            data: this.chartData.stbpv
+            data: this.chartData.stbpv || []
           }
         ]
       }
@@ -584,7 +607,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: this.chartData.csppi.map(item => item.slice(0, 2)),
+            data: this.chartData.csppi ? this.chartData.csppi.map(item => item.slice(0, 2)) : [],
             axisTick: {
               alignWithLabel: true
             }
@@ -600,7 +623,7 @@ export default {
             name: '人数',
             type: 'bar',
             barWidth: '60%',
-            data: this.chartData.csppv
+            data: this.chartData.csppv || []
           }
         ]
       }
@@ -631,7 +654,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: this.chartData.cstpi.map(item => item.slice(0, 2)),
+            data: this.chartData.cstpi ? this.chartData.cstpi.map(item => item.slice(0, 2)) : [],
             axisTick: {
               alignWithLabel: true
             }
@@ -647,7 +670,7 @@ export default {
             name: '队伍数',
             type: 'bar',
             barWidth: '60%',
-            data: this.chartData.cstpv
+            data: this.chartData.cstpv || []
           }
         ]
       }
