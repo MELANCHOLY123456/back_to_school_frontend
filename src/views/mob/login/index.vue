@@ -55,20 +55,21 @@ export default {
     }
   },
   methods: {
-    // 登录处理
-    async handleLogin () {
-      try {
-        if (!this.stuPattern.test(this.username) || !this.pwdPattern.test(this.password)) {
-          Toast('学号或密码格式错误，学号为12位，密码不小于8位')
-          return
-        }
-        const res = await acLogin(this.username, this.password)
-        this.$store.commit('account/setUserInfo', res.data)
-        Toast('登录成功')
-        this.$router.push('/mob/')
-      } catch (error) {
-        console.error('请求错误:', error || '未知错误')
-      }
+    // 登录处理
+    async handleLogin () {
+      try {
+        if (!this.stuPattern.test(this.username) || !this.pwdPattern.test(this.password)) {
+          Toast('学号或密码格式错误，学号为12位，密码不小于8位')
+          return
+        }
+        const res = await acLogin(this.username, this.password)
+        this.$store.commit('account/setUserInfo', res.data)
+        Toast('登录成功')
+        // 确保登录后跳转到移动端主页
+        this.$router.push('/mob/main')
+      } catch (error) {
+        console.error('请求错误:', error || '未知错误')
+      }
     },
     // 跳转到注册页面
     goToRegister () {

@@ -241,7 +241,8 @@ export default {
         peopleChartSpiltByCollege
       )
       // 缩放直方图的额外参数 prettier-ignore
-      const dataAxisPeopleChartSpiltByCollege = this.chartData.spbci ? this.chartData.spbci.map(item => item.slice(0, 2)) : []
+
+      const dataAxisPeopleChartSpiltByCollege = this.chartData.spbci ? this.chartData.spbci.map(item => item ? item.slice(0, 2) : '') : []
       // prettier-ignore
       const dataPeopleChartSpiltByCollege = this.chartData.spbcv || []
       const yMaxPeopleChartSpiltByCollege = 500
@@ -316,18 +317,24 @@ export default {
         )
 
       // Enable data zoom when user click bar.
+
       const zoomSize = 6
+
       this.peopleChartSpiltByCollegeInit.on('click', function (params) {
         console.log(dataAxisPeopleChartSpiltByCollege[Math.max(params.dataIndex - zoomSize / 2, 0)])
         if (this.peopleChartSpiltByCollegeInit) {
+          // 确保数据存在再访问
+          const startIndex = Math.max(params.dataIndex - zoomSize / 2, 0)
+          const endIndex = Math.min(params.dataIndex + zoomSize / 2, dataPeopleChartSpiltByCollege.length - 1)
+          const startValue = dataAxisPeopleChartSpiltByCollege[startIndex] || ''
+          const endValue = dataAxisPeopleChartSpiltByCollege[endIndex] || ''
           this.peopleChartSpiltByCollegeInit.dispatchAction({
             type: 'dataZoom',
-            startValue: dataAxisPeopleChartSpiltByCollege[Math.max(params.dataIndex - zoomSize / 2, 0)],
-            endValue:
-              dataAxisPeopleChartSpiltByCollege[Math.min(params.dataIndex + zoomSize / 2, dataPeopleChartSpiltByCollege.length - 1)]
+            startValue: startValue,
+            endValue: endValue
           })
         }
-      })
+      }.bind(this))
 
       // 图表2 各学院队伍数
       const teamChartSpiltByCollege = document.getElementById(
@@ -352,11 +359,17 @@ export default {
         },
         xAxis: [
           {
+
             type: 'category',
-            data: this.chartData.stbci ? this.chartData.stbci.map(item => item.slice(0, 2)) : [],
+
+            data: this.chartData.stbci ? this.chartData.stbci.map(item => item ? item.slice(0, 2) : '') : [],
+
             axisTick: {
+
               alignWithLabel: true
+
             }
+
           }
         ],
         yAxis: [
@@ -511,13 +524,21 @@ export default {
           containLabel: true
         },
         xAxis: [
+
           {
+
             type: 'category',
-            data: this.chartData.spbpi ? this.chartData.spbpi.map(item => item.slice(0, 2)) : [],
+
+            data: this.chartData.spbpi ? this.chartData.spbpi.map(item => item ? item.slice(0, 2) : '') : [],
+
             axisTick: {
+
               alignWithLabel: true
+
             }
+
           }
+
         ],
         yAxis: [
           {
@@ -558,13 +579,21 @@ export default {
           containLabel: true
         },
         xAxis: [
+
           {
+
             type: 'category',
-            data: this.chartData.stbpi ? this.chartData.stbpi.map(item => item.slice(0, 2)) : [],
+
+            data: this.chartData.stbpi ? this.chartData.stbpi.map(item => item ? item.slice(0, 2) : '') : [],
+
             axisTick: {
+
               alignWithLabel: true
+
             }
+
           }
+
         ],
         yAxis: [
           {
@@ -605,13 +634,21 @@ export default {
           containLabel: true
         },
         xAxis: [
+
           {
+
             type: 'category',
-            data: this.chartData.csppi ? this.chartData.csppi.map(item => item.slice(0, 2)) : [],
+
+            data: this.chartData.csppi ? this.chartData.csppi.map(item => item ? item.slice(0, 2) : '') : [],
+
             axisTick: {
+
               alignWithLabel: true
+
             }
+
           }
+
         ],
         yAxis: [
           {
@@ -652,13 +689,21 @@ export default {
           containLabel: true
         },
         xAxis: [
+
           {
+
             type: 'category',
-            data: this.chartData.cstpi ? this.chartData.cstpi.map(item => item.slice(0, 2)) : [],
+
+            data: this.chartData.cstpi ? this.chartData.cstpi.map(item => item ? item.slice(0, 2) : '') : [],
+
             axisTick: {
+
               alignWithLabel: true
+
             }
+
           }
+
         ],
         yAxis: [
           {

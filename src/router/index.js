@@ -32,16 +32,26 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
+// 统一的设备检测函数：优先使用 User-Agent，再用窗口宽度作为退路
+const isMobileDevice = () => {
+  try {
+    const ua = window && window.navigator && window.navigator.userAgent
+    const mobileRe = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+    return mobileRe.test(ua) || (window && window.innerWidth <= 768)
+  } catch (e) {
+    return false
+  }
+}
+
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
-    { path: '/', redirect: '/pc/' },
-
+    { path: '/', redirect: () => (isMobileDevice() ? '/mob/main' : '/pc/main') },
     { path: '/pc/login', component: () => import('@/views/pc/login') },
     { path: '/pc/register', component: () => import('@/views/pc/register') },
     { path: '/pc/inf', component: () => import('@/views/pc/informationframe') },
-    { path: '/pc/', component: () => import('@/views/pc/frontframe') },
+    { path: '/pc/', redirect: '/pc/main' },
     { path: '/pc/main', component: () => import('@/views/pc/frontframe') },
     {
       path: '/pc/back',
@@ -57,36 +67,26 @@ const router = new VueRouter({
         { path: 'headofcollege', component: () => import('@/views/pc/backframe/headofcollege') }
       ]
     },
-
     { path: '/mob/login', component: () => import('@/views/mob/login') },
     { path: '/mob/forgetpwd', component: () => import('@/views/mob/login/forgetpwd.vue') },
     { path: '/mob/register', component: () => import('@/views/mob/register') },
     { path: '/mob/information', component: () => import('@/views/mob/informationframe') },
-
     {
-
       path: '/mob/',
-
       name: 'mFrontFrame',
-
       component: () => import('@/views/mob/frontframe'),
-
-      redirect: 'main',
-
+      redirect: '/mob/main',
       children: [
-
-        { path: 'main', component: () => import('@/views/mob/frontframe/main') } // 使用相对路径
-
+        { path: 'main', component: () => import('@/views/mob/frontframe/main') }
       ]
-
     },
     {
       path: '/mob/f',
       component: () => import('@/views/mob/frontframe/contentframe'),
       children: [
-        { path: 'signup', component: () => import('@/views/mob/frontframe/signup') }, // 使用相对路径
-        { path: 'check', component: () => import('@/views/mob/frontframe/check') }, // 使用相对路径
-        { path: 'changeteam', component: () => import('@/views/mob/frontframe/changeteam') }, // 使用相对路径
+        { path: 'signup', component: () => import('@/views/mob/frontframe/signup') },
+        { path: 'check', component: () => import('@/views/mob/frontframe/check') },
+        { path: 'changeteam', component: () => import('@/views/mob/frontframe/changeteam') },
         { path: 'before', component: () => import('@/views/mob/frontframe/beforesignup') }
       ]
     },
@@ -153,7 +153,7 @@ const router = new VueRouter({
 //   ]
 // })
 
-const unAutherUrls = ['/mob/login', '/mob/forgetPwd', '/mob/register', '/pc/login', '/pc/register']
+const unAutherUrls = ['/mob/login', '/mob/forgetpwd', '/mob/register', '/pc/login', '/pc/register']
 // const unAutherUrls = []
 // 注意参数的顺序 所有路由在被解析之前，都会进过全局前置守卫，守卫放行，才能到对应的页面
 // 1. to 往哪里去， 到哪去的路由信息对象（路径、参数）
@@ -173,16 +173,37 @@ router.beforeEach((to, from, next) => {
   console.log(token)
 
   // token不存在，拦截到登录页
+
   if (token === '' || token === undefined) {
-    const isMobile = window.innerWidth <= 1440
-    const loginPath = isMobile ? '/mob/login' : '/pc/login'
-    next(loginPath)
+    // 使用统一的设备检测函数决定登录页
+    const loginPath = isMobileDevice() ? '/mob/login' : '/pc/login'
+    // 避免无限重定向循环
+    if (to.path === loginPath) {
+      next()
+    } else {
+      next(loginPath)
+    }
   } else {
-    // 只能从 /mob/main 或 /mob/f/check 页面跳转到 /mob/f/signup
-    if ((from.path === '/mob/main' || from.path === '/mob/f/check' || from.path === '/mob/f/before') && to.path === '/mob/f/signup') {
-      next() // 允许跳转
-    } else if (to.path === '/mob/f/signup') {
-      next('/mob/main') // 不符合要求，跳转到 /mob/main
+    // 简化/main页面的访问限制，只限制未授权访问
+    // 修复 /main 路径跳转问题，根据设备类型跳转到对应的 main 页面
+
+    if (to.path === '/main') {
+      next(isMobileDevice() ? '/mob/main' : '/pc/main')
+    // eslint-disable-next-line brace-style
+    }
+    // PC端登录后跳转到PC端主页
+    else if (from.path === '/pc/login' && to.path === '/pc/main') {
+      next()
+    // eslint-disable-next-line brace-style
+    }
+    // 移动端登录后跳转到移动端主页
+    else if (from.path === '/mob/login' && to.path === '/mob/main') {
+      next()
+    // eslint-disable-next-line brace-style
+    }
+    // 避免循环重定向
+    else if (to.path === '/pc/main' || to.path === '/mob/main' || to.path === '/pc/' || to.path === '/mob/') {
+      next()
     } else {
       next() // 其他路径正常跳转
     }

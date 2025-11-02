@@ -23,25 +23,8 @@ instance.interceptors.request.use(function (config) {
     duration: 0 // 不自动关闭
   })
 
-  // 根据当前路由路径添加平台前缀
-  const currentPath = window.location.pathname
-  const isPC = currentPath.startsWith('/pc/')
-  const isMobile = currentPath.startsWith('/mob/')
-
-  // 如果是PC端或移动端路由，且URL不是以平台前缀开头，则添加相应前缀
-  if ((isPC || isMobile) && config.url) {
-    // 检查URL是否已经包含平台前缀
-    if (!config.url.startsWith('/pc/') && !config.url.startsWith('/mob/')) {
-      // 添加平台前缀
-      const prefix = isPC ? '/pc' : '/mob'
-      // 确保URL以/开头
-      if (!config.url.startsWith('/')) {
-        config.url = prefix + '/' + config.url
-      } else {
-        config.url = prefix + config.url
-      }
-    }
-  }
+  // 调试信息
+  console.log('Request URL:', config.baseURL + config.url)
   return config
 }, function (error) {
   // 对请求错误做些什么

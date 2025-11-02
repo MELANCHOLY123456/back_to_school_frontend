@@ -84,7 +84,19 @@ export default {
       this.selectorItem = getSelectorInfo()
     },
     async getSignupPdf () {
-      await getSignupPdf(this.form)
+      try {
+        console.log('准备下载报名表...')
+        await getSignupPdf(this.form)
+        console.log('报名表下载完成')
+      } catch (error) {
+        console.error('下载报名表失败:', error)
+        // 提供更详细的错误信息
+        if (error.response) {
+          this.$toast.fail(`下载失败: ${error.response.status} ${error.response.statusText}`)
+        } else {
+          this.$toast.fail('下载报名表失败，请检查网络连接或稍后重试')
+        }
+      }
     },
     goToSignupAgain () {
       this.$router.push('/mob/f/signup')

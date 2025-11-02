@@ -1,6 +1,6 @@
 <template>
   <div>
-    <van-button type="info" plain @click="showAddModal = true" :disabled="membersTotal >= props.队员上限">添加成员</van-button>
+    <van-button type="info" plain @click="showAddModal = true" :disabled="membersTotal >= (props ? props.队员上限 : 0)">添加成员</van-button>
 
     <van-popup round closeable close-icon="close" v-model="showAddModal" position="bottom" :style="{ height: '45%' }">
       <div class="popup-content">
@@ -53,7 +53,13 @@ export default {
         college: '',
         major: ''
       },
-      props: this.$store.state.sysProps.props
+      props: this.$store.state.sysProps.props || {} // 添加默认值以防止null
+    }
+  },
+  created () {
+    // 确保组件创建时获取props
+    if (!this.props || Object.keys(this.props).length === 0) {
+      this.getProps()
     }
   },
   computed: {
@@ -69,10 +75,19 @@ export default {
   },
   methods: {
     async getProps () {
-      const res = await getProps()
-      if (res && res?.data) {
-        this.props = res.data.props
-        this.$store.commit('sysProps/setProps', this.props)
+      try {
+        const res = await getProps()
+        if (res && res?.data && res.data.props) {
+          this.props = res.data.props
+          this.$store.commit('sysProps/setProps', this.props)
+        } else {
+          // 如果返回的数据不完整，使用空对象作为默认值
+          this.props = {}
+        }
+      } catch (error) {
+        console.error('获取系统属性失败:', error)
+        // 出错时使用空对象作为默认值
+        this.props = {}
       }
     },
     addMember () {

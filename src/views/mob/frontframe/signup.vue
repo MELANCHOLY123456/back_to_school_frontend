@@ -55,10 +55,8 @@
               </div>
             </template>
           </van-field>
-
         </van-cell>
       </van-cell-group>
-
       <!-- 队伍意向信息 -->
       <van-cell-group title="队伍意向信息" inset>
         <!-- 目标地区选择 -->
@@ -68,7 +66,6 @@
           :style="{ height: '60%' }">
           <van-area title="选择" :area-list="areaList" value="110101" @confirm="onDistrictConfirm" />
         </van-popup>
-
         <!-- 其他输入项 -->
         <van-field @blur="trimText('senior')" v-model="form.senior" label="目标高中" placeholder="请输入目标高中全称"
           :rules="[{ pattern: seniorPattern, message: '目标高中不能为空' }]" />
@@ -77,7 +74,6 @@
           :rules="[{ pattern: teamSummaryPattern, message: '队伍简介不能为空' }]" />
         <mSwitch label="是否愿意与其他队伍合并" :value="isWillingToMerge" @confirm="getIsWillingToMerge" />
         <mSwitch label="是否作为一个团队报名" :value="isTeam" @confirm="getIsTeam" />
-
         <!-- 团队信息，显示控制 -->
         <div v-show="isTeam === true">
           <van-field :value="form.memberCount" center clearable :readonly="true" :colon="true" label="队员人数">
@@ -91,7 +87,6 @@
         </div>
       </van-cell-group>
     </van-form>
-
     <!-- 提交按钮 -->
     <van-row type="flex" justify="center">
       <van-col span="24">
@@ -274,12 +269,13 @@ export default {
       }
 
       const res = await submitForm(this.form)
+
       if (res) {
         Toast.success('提交成功')
         this.$store.commit('selfInf/setForm', this.form)
         this.$store.commit('accInfo/setIsSignuped', 1)
         this.$store.commit('accInfo/setIsLeader', 1)
-        this.$router.push('/mob/')
+        // 提交成功后不跳转页面，留在当前页面
       }
     }
   },

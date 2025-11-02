@@ -39,7 +39,7 @@ import { Toast } from 'vant'
 export default {
   name: 'mSignupBefore',
   mounted () {
-    this.getSelfInf()
+    // this.getSelfInf() // 注释掉未定义的方法调用
   },
   data () {
     return {
@@ -137,19 +137,24 @@ export default {
     },
     async handleRealName () {
       if (this.validate() === true) {
-        const realNameRes = await realName({ IDCardType: this.IDCardType, IDCardNum: this.IDCardNum })
-        console.log(realNameRes)
-        if (realNameRes === undefined) {
-          Toast.fail('实名认证失败，身份证号可能与学号不匹配')
-          return
+        try {
+          const realNameRes = await realName({ IDCardType: this.IDCardType, IDCardNum: this.IDCardNum })
+          console.log(realNameRes)
+          if (realNameRes === undefined) {
+            Toast.fail('实名认证失败，身份证号可能与学号不匹配')
+            return
+          }
+          const res = await getSelfInf()
+          this.$store.commit('selfInf/setForm', res.data.form)
+          this.$store.commit('selectorItem/setSelectorItem', res.data.selectorItem)
+
+          this.$store.commit('accInfo/setIsRealName', 1)
+
+          this.$router.push('/mob/f/signup')
+        } catch (error) {
+          console.error('实名认证请求失败:', error)
+          Toast.fail('实名认证请求失败，请稍后重试')
         }
-        const res = await getSelfInf()
-        this.$store.commit('selfInf/setForm', res.data.form)
-        this.$store.commit('selectorItem/setSelectorItem', res.data.selectorItem)
-
-        this.$store.commit('accInfo/setIsRealName ', 1)
-
-        this.$router.push('/mob/f/signup')
       }
     }
   }

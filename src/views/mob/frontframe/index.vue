@@ -106,7 +106,7 @@ export default {
       removeSelectorInfo()
       removeSignupInfo()
       this.$router.push('/mob/login')
-      window.location.reload()
+      // 移除 window.location.reload()，因为路由跳转会自动重新加载页面
     },
     onClickRight () {
       this.$router.push('/mob/information')

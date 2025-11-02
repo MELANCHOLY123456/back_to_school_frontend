@@ -102,7 +102,7 @@ export default {
     },
     onClickLeft () {
       // 返回逻辑
-      this.$router.push('/mob')
+      this.$router.push('/mob/main')
     },
     onClickRight () {
       // 右侧点击逻辑

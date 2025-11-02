@@ -97,7 +97,7 @@ export default {
   methods: {
     onClickLeft () {
       console.log('返回按钮被点击')
-      this.$router.push('/mob/') // 或者用具体路径
+      this.$router.push('/mob/main') // 明确跳转到移动端主页
       Toast('返回')
     },
     onClickRight () {

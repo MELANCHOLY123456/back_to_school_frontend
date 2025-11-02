@@ -4,7 +4,7 @@ import { getMD5 } from '@/utils/md5'
 
 export const getSelfInf = async () => {
   const res = await request({
-    url: 'signup/',
+    url: 'signup',
     method: 'post',
     data: {
       user: store.getters.user,
@@ -29,7 +29,7 @@ export const acLogin = async (user, password) => {
 
 export const register = async (register) => {
   register.password = getMD5(register.password)
-  return await request.post('register/',
+  return await request.post('/auth/register/',
 
     // 如果要直接传递对象属性而不嵌套在一个字段下，
     // 可以直接将该对象作为 data 参数传递
@@ -73,38 +73,36 @@ export const getSmsCode = async (piccode, picToken, email) => {
 }
 
 export const getSignupPdf = async (form) => {
-  const response = await request({
-    url: 'signup/getSignupPdf/',
-    method: 'post',
-    responseType: 'blob', // 处理为二进制流
-    data: {
-      form: form,
-      tokenRes: {
-        user: store.getters.user,
-        token: store.getters.token
+  try {
+    console.log('准备下载报名表...')
+    const response = await request({
+      url: '/signup/getSignupPdf/', // 使用绝对路径，避免请求拦截器添加平台前缀
+      method: 'post',
+      responseType: 'blob',
+      data: {
+        form: form,
+        tokenRes: {
+          user: store.getters.user,
+          token: store.getters.token
+        }
       }
-    }
-  })
-
-  const blob = new Blob([response.data], { type: 'application/zip' })
-  const link = document.createElement('a')
-  link.href = URL.createObjectURL(blob)
-
-  // 获取当前日期和时间
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-  const seconds = String(now.getSeconds()).padStart(2, '0')
-
-  // 格式化为 20241109164406 格式
-  const formattedDateTime = `${year}${month}${day}${hours}${minutes}${seconds}`
-
-  // 设置下载链接的文件名
-  link.download = `报名表-${formattedDateTime}.zip`
-  link.click()
+    })
+    // 使用服务器端下载而不是blob URL
+    const downloadUrl = window.URL.createObjectURL(new Blob([response.data], { type: 'application/zip' }))
+    const link = document.createElement('a')
+    link.href = downloadUrl
+    link.setAttribute('download', '报名表.zip')
+    document.body.appendChild(link)
+    link.click()
+    // 清理
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(downloadUrl)
+    console.log('成功下载报名表')
+    return response
+  } catch (error) {
+    console.error('下载报名表失败:', error)
+    throw error
+  }
 }
 
 // 获取绑定的邮箱
@@ -143,24 +141,16 @@ export const getStatisticalDataTable = async () => {
       token: store.getters.token
     }
   })
-  const blobS = new Blob([res.data], { type: 'application/zip' })
-  const linkS = document.createElement('a')
-  linkS.href = URL.createObjectURL(blobS)
-
-  // 获取当前日期和时间
-  const now = new Date()
-  const yearS = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-  const seconds = String(now.getSeconds()).padStart(2, '0')
-
-  const formattedDateTime = `${yearS}${month}${day}${hours}${minutes}${seconds}`
-
-  // 设置下载链接的文件名
-  linkS.download = `数据统计表-${formattedDateTime}.zip`
-  linkS.click()
+  // 直接触发下载，避免使用blob URL
+  const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }))
+  const link = document.createElement('a')
+  link.href = url
+  link.setAttribute('download', '数据统计表.zip')
+  document.body.appendChild(link)
+  link.click()
+  // 清理
+  document.body.removeChild(link)
+  window.URL.revokeObjectURL(url)
 }
 
 export const getIsSignuped = async () => {
@@ -187,7 +177,7 @@ export const getIsRealName = async () => {
 
 export const realName = async (realnameRes) => {
   return await request({
-    url: 'realname/',
+    url: 'signup/realname/',
     method: 'post',
     data: {
       tokenRes: {
@@ -295,9 +285,10 @@ export const getAccount = async () => {
 }
 
 // 队长撤销报名
+
 export const withdrawSignup = async () => {
   return await request({
-    url: 'delete/teamTable/',
+    url: '/admin/delete/teamTable/', // 使用绝对路径，避免请求拦截器添加平台前缀
     method: 'post',
     data: {
       user: store.getters.user,
@@ -361,24 +352,16 @@ export const getSignupDataTable = async (year, college, isHavingMemberID, isMemb
     }
   })
 
-  const blobALL = new Blob([res.data], { type: 'application/zip' })
-  const linkAll = document.createElement('a')
-  linkAll.href = URL.createObjectURL(blobALL)
-
-  // 获取当前日期和时间
-  const now = new Date()
-  const yearALL = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-  const seconds = String(now.getSeconds()).padStart(2, '0')
-
-  const formattedDateTime = `${yearALL}${month}${day}${hours}${minutes}${seconds}`
-
-  // 设置下载链接的文件名
-  linkAll.download = `报名统计表-${formattedDateTime}.zip`
-  linkAll.click()
+  // 直接触发下载，避免使用blob URL
+  const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }))
+  const link = document.createElement('a')
+  link.href = url
+  link.setAttribute('download', '报名统计表.zip')
+  document.body.appendChild(link)
+  link.click()
+  // 清理
+  document.body.removeChild(link)
+  window.URL.revokeObjectURL(url)
 }
 
 // 获取权限等级

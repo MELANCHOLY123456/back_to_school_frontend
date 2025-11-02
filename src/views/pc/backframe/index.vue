@@ -171,7 +171,7 @@ export default {
       removeSelectorInfo()
       removeSignupInfo()
       this.$router.push('/pc/login') // 假设你有一个登录页面的路由
-      window.location.reload()
+      // 移除 window.location.reload()，因为路由跳转会自动重新加载页面
     }
   }
 }
