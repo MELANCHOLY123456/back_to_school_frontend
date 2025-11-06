@@ -91,7 +91,6 @@ export default {
   name: 'mFrontFrameIndex',
   data () {
     return {
-
     }
   },
   computed: {
