@@ -119,14 +119,8 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .custom-nav-bar {
   background-color: #f7f7f7;
-}
-.custom-tabbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
 }
 </style>

@@ -193,11 +193,9 @@ export default {
         this.form[field] = this.form[field].toUpperCase()
       }
     },
-
     // 证件号码验证
     validateIDCard (value) {
       const IDCardType = this.form.IDCardType
-
       // 校验中国大陆居民身份证
       if (IDCardType === '中国大陆居民身份证') {
         const reg = /^[1-9]\d{5}(18|19|20|21|22)\d{2}((0[1-9])|(1[0-2]))((0[1-9])|([1-2]\d)|(3[0-1]))\d{3}([0-9Xx])$/
