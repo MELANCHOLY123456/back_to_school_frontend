@@ -92,7 +92,8 @@ export default {
         const res = await acLogin(this.form.username, this.form.password)
         this.$store.commit('account/setUserInfo', res.data) // 存储用户信息到 Vuex
         Toast('登录成功')
-        this.$router.push('/pc/') // 登录成功后跳转到PC端首页
+        // 所有设备都跳转到移动端主页
+        this.$router.push('/mob/')
       } catch (error) {
         console.error('请求错误:', error || '未知错误')
       }

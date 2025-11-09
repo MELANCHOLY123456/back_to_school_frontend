@@ -79,19 +79,11 @@
         ></el-date-picker>
       </el-col>
     </el-row>
-
     <!-- 按钮区域 -->
-
     <el-row class="button-section" :gutter="20">
-
       <el-col :span="4">
-
         <el-button type="primary" @click="handleSearch" size="small">筛选</el-button>
-
         <el-button type="warning" @click="emptyToInput" size="small">清空筛选条件</el-button>
-
-        <el-button type="success" @click="refreshData" size="small">刷新数据</el-button>
-
       </el-col>
       <el-col :span="3">
         <el-button style="width:100%;" type="info" @click="downloadSignupInfo" size="small">下载报名信息</el-button>
@@ -819,13 +811,6 @@ export default {
 
     indexMethod (index) {
       return (this.currentPage - 1) * this.pageSize + index + 1
-    },
-
-    // 刷新数据
-
-    async refreshData () {
-      await this.getSignupData()
-      this.$message.success('数据已刷新')
     }
   }
 }

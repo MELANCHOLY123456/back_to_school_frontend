@@ -199,7 +199,7 @@ export const getProps = async () => {
 
 export const setProps = async (props) => {
   return await request({
-    url: 'set/props/',
+    url: 'system/set/props/',
     method: 'post',
     data: {
       tokenRes: {
@@ -257,7 +257,7 @@ export const getAdminAccount = async () => {
 // 更改管理员权限
 export const updateAdminAccount = async (user, authority1, authority2) => {
   return await request({
-    url: 'update/adminAccount/',
+    url: '/admin/update/adminAccount/',
     method: 'post',
     data: {
       tokenRes: {
@@ -471,7 +471,7 @@ export const verifyForgetPassword = async (user, piccode, pictoken, smscode, sms
 
 export const resetSignupForm = async () => {
   return await request({
-    url: 'system/reset/signupForm/',
+    url: '/system/reset/signupForm/',
     method: 'post',
     data: {
       user: store.getters.user,

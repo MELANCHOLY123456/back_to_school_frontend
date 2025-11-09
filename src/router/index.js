@@ -47,11 +47,11 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
-    { path: '/', redirect: () => (isMobileDevice() ? '/mob/main' : '/pc/main') },
+    { path: '/', redirect: '/mob/main' },
     { path: '/pc/login', component: () => import('@/views/pc/login') },
     { path: '/pc/register', component: () => import('@/views/pc/register') },
     { path: '/pc/inf', component: () => import('@/views/pc/informationframe') },
-    { path: '/pc/', redirect: '/pc/main' },
+    { path: '/pc/', redirect: '/mob/main' },
     { path: '/pc/main', component: () => import('@/views/pc/frontframe') },
     {
       path: '/pc/back',
@@ -177,7 +177,9 @@ router.beforeEach((to, from, next) => {
   if (token === '' || token === undefined) {
     // 使用统一的设备检测函数决定登录页
     const loginPath = isMobileDevice() ? '/mob/login' : '/pc/login'
+
     // 避免无限重定向循环
+
     if (to.path === loginPath) {
       next()
     } else {
@@ -188,19 +190,10 @@ router.beforeEach((to, from, next) => {
     // 修复 /main 路径跳转问题，根据设备类型跳转到对应的 main 页面
 
     if (to.path === '/main') {
-      next(isMobileDevice() ? '/mob/main' : '/pc/main')
+      next('/mob/main')
     // eslint-disable-next-line brace-style
     }
-    // PC端登录后跳转到PC端主页
-    else if (from.path === '/pc/login' && to.path === '/pc/main') {
-      next()
-    // eslint-disable-next-line brace-style
-    }
-    // 移动端登录后跳转到移动端主页
-    else if (from.path === '/mob/login' && to.path === '/mob/main') {
-      next()
-    // eslint-disable-next-line brace-style
-    }
+
     // 避免循环重定向
     else if (to.path === '/pc/main' || to.path === '/mob/main' || to.path === '/pc/' || to.path === '/mob/') {
       next()
