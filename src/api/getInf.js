@@ -88,10 +88,10 @@ export const getSignupPdf = async (form) => {
       }
     })
     // 使用服务器端下载而不是blob URL
-    const downloadUrl = window.URL.createObjectURL(new Blob([response.data], { type: 'application/zip' }))
+    const downloadUrl = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }))
     const link = document.createElement('a')
     link.href = downloadUrl
-    link.setAttribute('download', '报名表.zip')
+    link.setAttribute('download', '报名表.xlsx')
     document.body.appendChild(link)
     link.click()
     // 清理
