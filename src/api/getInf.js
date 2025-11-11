@@ -320,7 +320,7 @@ export const updateAccountInfo = async (user, resetTeam, resetPwd, resetEmail) =
 // 获取报名信息表
 export const getSignupData = async (year) => {
   return await request({
-    url: `signup/get/signupInfo/${year}`,
+    url: `signup/get/signupInfo/${year}/`,
     method: 'post',
     timeout: 0, // 设置为0表示不设置超时限制，直到请求完成
     data: {

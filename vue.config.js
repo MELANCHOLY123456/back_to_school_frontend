@@ -59,8 +59,8 @@ module.exports = defineConfig({
     // 移除 HTTPS 配置，使用 HTTP，让 ngrok 处理 HTTPS
     allowedHosts: 'all',
     port: 8081,
-    host: '0.0.0.0',
-    // 添加公共访问地址
-    public: 'supercuriously-challengeable-teresia.ngrok-free.dev'
+    host: '0.0.0.0'
+    // // 添加公共访问地址
+    // public: 'supercuriously-challengeable-teresia.ngrok-free.dev'
   }
 })
