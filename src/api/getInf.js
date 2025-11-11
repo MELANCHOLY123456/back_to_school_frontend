@@ -4,7 +4,7 @@ import { getMD5 } from '@/utils/md5'
 
 export const getSelfInf = async () => {
   const res = await request({
-    url: 'signup',
+    url: '/signup/',
     method: 'post',
     data: {
       user: store.getters.user,

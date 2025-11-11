@@ -4,12 +4,20 @@ import router from '@/router'
 import { Toast } from 'vant'
 import { removeInfo, removeSelectorInfo, removeSignupInfo } from './storage'
 
-// 创建一个新的axios实例
+// // 创建一个新的axios实例
+// const instance = axios.create({
+//   // baseURL: 'https://112.74.38.245:8000',
+//   // baseURL: 'http://127.0.0.1:8080',
+//   baseURL: '/api',
+//   timeout: 12500
+//   // headers: { 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0' }
+// })
+
 const instance = axios.create({
-  // baseURL: 'https://112.74.38.245:8000',
-  baseURL: 'http://127.0.0.1:8080',
-  timeout: 12500
-  // headers: { 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0' }
+  // 使用相对路径，让nginx处理代理
+  baseURL: '/api',
+  timeout: 30000, // 增加超时时间
+  withCredentials: true // 如果需要跨域携带cookie
 })
 
 // // 添加请求拦截器
