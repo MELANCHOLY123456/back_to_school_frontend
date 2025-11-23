@@ -121,7 +121,7 @@ export const getSignupPdf = async (form) => {
       }
     })
 
-    // 使用服务器端下载而不是blob 
+    // 使用服务器端下载而不是blob
     const downloadUrl = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
     const link = document.createElement('a')
     link.href = downloadUrl
