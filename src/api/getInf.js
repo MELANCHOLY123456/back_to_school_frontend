@@ -72,6 +72,39 @@ export const getSmsCode = async (piccode, picToken, email) => {
   })
 }
 
+// export const getSignupPdf = async (form) => {
+//   try {
+//     console.log('准备下载报名表...')
+//     const response = await request({
+//       url: '/signup/getSignupPdf/', // 使用绝对路径，避免请求拦截器添加平台前缀
+//       method: 'post',
+//       responseType: 'blob',
+//       data: {
+//         form: form,
+//         tokenRes: {
+//           user: store.getters.user,
+//           token: store.getters.token
+//         }
+//       }
+//     })
+//     // 使用服务器端下载而不是blob URL
+//     const downloadUrl = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }))
+//     const link = document.createElement('a')
+//     link.href = downloadUrl
+//     link.setAttribute('download', '报名表.xlsx')
+//     document.body.appendChild(link)
+//     link.click()
+//     // 清理
+//     document.body.removeChild(link)
+//     window.URL.revokeObjectURL(downloadUrl)
+//     console.log('成功下载报名表')
+//     return response
+//   } catch (error) {
+//     console.error('下载报名表失败:', error)
+//     throw error
+//   }
+// }
+
 export const getSignupPdf = async (form) => {
   try {
     console.log('准备下载报名表...')
@@ -87,13 +120,15 @@ export const getSignupPdf = async (form) => {
         }
       }
     })
-    // 使用服务器端下载而不是blob URL
-    const downloadUrl = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }))
+
+    // 使用服务器端下载而不是blob 
+    const downloadUrl = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
     const link = document.createElement('a')
     link.href = downloadUrl
-    link.setAttribute('download', '报名表.xlsx')
+    link.setAttribute('download', '报名表.pdf') // 设置下载文件的名称为 PDF
     document.body.appendChild(link)
     link.click()
+
     // 清理
     document.body.removeChild(link)
     window.URL.revokeObjectURL(downloadUrl)
